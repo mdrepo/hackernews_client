@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">HackerNews</string>
+    <string name="loading_comments">Loading comments</string>
+    <string name="no_internet_msg">No internet. Please check connection</string>
+</resources>
