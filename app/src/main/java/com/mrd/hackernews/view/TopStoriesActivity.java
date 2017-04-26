@@ -43,6 +43,7 @@ public class TopStoriesActivity extends AppCompatActivity implements OnItemClick
         initUI();
         hackerNewsService = HackerNewsService.getInstance(getApplicationContext());
         progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(getString(R.string.loading));
         progressDialog.show();
         getTopStories();
 
@@ -74,18 +75,22 @@ public class TopStoriesActivity extends AppCompatActivity implements OnItemClick
 
 
     private void getTopStories() {
-        hackerNewsService
-                .getTopStoriesObservable()
-                .subscribe(integers -> {
-                    progressDialog.dismiss();
-                    newsIds = integers;
-                }, throwable -> {
-                    progressDialog.dismiss();
-                    showError(TOP_STORIES, throwable);
-                }, () -> {
-                    getDetailStories();
-                    progressDialog.show();
-                });
+        if(Common.isNetworkConnected(getApplicationContext())) {
+            hackerNewsService
+                    .getTopStoriesObservable()
+                    .subscribe(integers -> {
+                        progressDialog.dismiss();
+                        newsIds = integers;
+                    }, throwable -> {
+                        progressDialog.dismiss();
+                        showError(TOP_STORIES, throwable);
+                    }, () -> {
+                        getDetailStories();
+                        progressDialog.show();
+                    });
+        } else {
+            showError(TOP_STORIES,new Throwable(getString(R.string.no_internet_msg)));
+        }
     }
 
     private void getDetailStories() {
