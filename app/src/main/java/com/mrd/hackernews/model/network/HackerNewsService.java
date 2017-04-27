@@ -16,6 +16,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+
 import com.mrd.hackernews.utils.Common;
 
 /**
@@ -40,12 +41,10 @@ public class HackerNewsService {
     }
 
     public Observable<Item> getItemObservable(int id) {
-
-        Observable<com.mrd.hackernews.model.Item> ob = getInterface()
+        return getInterface()
                 .getItem(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
-        return ob;
     }
 
     public Observable<ArrayList<Integer>> getTopStoriesObservable() {

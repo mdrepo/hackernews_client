@@ -20,6 +20,7 @@ import com.mrd.hackernews.utils.OnItemClickListener;
 import java.util.ArrayList;
 
 import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
 
 public class TopStoriesActivity extends AppCompatActivity implements OnItemClickListener {
 
@@ -35,6 +36,7 @@ public class TopStoriesActivity extends AppCompatActivity implements OnItemClick
 
     RecyclerView rcNews;
     NewsAdapter newsAdapter;
+    private Disposable detailStoriesObservable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +101,7 @@ public class TopStoriesActivity extends AppCompatActivity implements OnItemClick
         if (page == 1) {
             newsItems = new ArrayList<>();
         }
-        Observable.fromArray(newsIds.subList(start, end))
+        detailStoriesObservable = Observable.fromArray(newsIds.subList(start, end))
                 .flatMapIterable(list -> list)
                 .concatMap(id -> hackerNewsService.getItemObservable(id))
                 .subscribe(item -> {
@@ -117,6 +119,7 @@ public class TopStoriesActivity extends AppCompatActivity implements OnItemClick
                         swipeRefreshLayout.setRefreshing(false);
                     }
                     page++;
+
                 });
     }
 
@@ -146,5 +149,12 @@ public class TopStoriesActivity extends AppCompatActivity implements OnItemClick
             showCommentsScreen.putExtra("item", (Item) value);
             startActivity(showCommentsScreen);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        detailStoriesObservable.dispose();
+
     }
 }
