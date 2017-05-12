@@ -1,4 +1,4 @@
-package com.mrd.hackernews.presenter;
+package com.mrd.hackernews.top_stories;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.mrd.hackernews.R;
-import com.mrd.hackernews.model.Item;
+import com.mrd.hackernews.data.Item;
 import com.mrd.hackernews.ui_components.HNTextView;
 import com.mrd.hackernews.utils.Common;
 import com.mrd.hackernews.utils.OnItemClickListener;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
  * Created by mayurdube on 25/04/17.
  */
 
-public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class TopStoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public static final int LOAD_MORE = -1;
     private static final int VIEW_TYPE_ITEM = 1;
@@ -30,7 +30,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private OnItemClickListener listener;
     private boolean isFooterEnabled = false;
 
-    public NewsAdapter(ArrayList<Item> items) {
+    public TopStoriesAdapter(ArrayList<Item> items) {
         this.items = items;
     }
 
@@ -73,7 +73,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public void setNews(ArrayList<Item> news) {
-        this.items = news;
+        items.addAll(news);
         notifyDataSetChanged();
     }
 
@@ -85,6 +85,13 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public int getItemViewType(int position) {
 
         return isFooterEnabled && position == items.size() ? VIEW_TYPE_PROGRESS : VIEW_TYPE_ITEM;
+    }
+
+    public void loadingLastPage() {
+        if(items != null) {
+            enableFooter(true);
+            notifyItemInserted(items.size());
+        }
     }
 
     public class NewsProgress extends RecyclerView.ViewHolder {
@@ -120,7 +127,6 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     URL url = new URL(item.getUrl());
                     txtItemSource.setText("(" + url.getHost().replaceAll("www.", "") + ")");
                 } catch (MalformedURLException e) {
-                    e.printStackTrace();
                     txtItemSource.setVisibility(View.GONE);
                 }
                 String infoString = item.getScore() + " points | by "

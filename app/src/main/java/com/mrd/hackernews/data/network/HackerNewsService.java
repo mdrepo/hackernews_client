@@ -1,14 +1,12 @@
-package com.mrd.hackernews.model.network;
+package com.mrd.hackernews.data.network;
 
 import android.content.Context;
 
-import com.mrd.hackernews.model.Item;
+import com.mrd.hackernews.data.Item;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;

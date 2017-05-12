@@ -4,17 +4,14 @@ import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.mrd.hackernews.model.Item;
-import com.mrd.hackernews.model.network.HackerNewsService;
+import com.mrd.hackernews.data.Item;
+import com.mrd.hackernews.data.network.HackerNewsService;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Arrays;
-
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
-import io.reactivex.subscribers.TestSubscriber;
 
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;

@@ -1,7 +1,5 @@
 package com.mrd.hackernews;
 
-import com.mrd.hackernews.model.network.HackerNewsService;
-
 import org.junit.Test;
 
 import static org.junit.Assert.*;

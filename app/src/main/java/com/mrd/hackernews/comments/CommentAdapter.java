@@ -1,4 +1,4 @@
-package com.mrd.hackernews.presenter;
+package com.mrd.hackernews.comments;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -8,11 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.mrd.hackernews.R;
-import com.mrd.hackernews.model.Item;
+import com.mrd.hackernews.data.Item;
 import com.mrd.hackernews.ui_components.HNTextView;
 import com.mrd.hackernews.utils.Common;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by mayurdube on 26/04/17.
@@ -20,10 +21,10 @@ import java.util.ArrayList;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
 
-    private final ArrayList<Item> comments;
+    private final ArrayList<Item> mComments;
 
     public CommentAdapter(ArrayList<Item> comments) {
-        this.comments = comments;
+        this.mComments = comments;
     }
 
 
@@ -36,13 +37,18 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     @Override
     public void onBindViewHolder(CommentViewHolder holder, int position) {
-        Item item = comments.get(position);
+        Item item = mComments.get(position);
         holder.bind(item);
     }
 
     @Override
     public int getItemCount() {
-        return comments == null ? 0 : comments.size();
+        return mComments == null ? 0 : mComments.size();
+    }
+
+    public void setComments(List<Item> comments) {
+        mComments.addAll(comments);
+        notifyDataSetChanged();
     }
 
     public class CommentViewHolder extends RecyclerView.ViewHolder {

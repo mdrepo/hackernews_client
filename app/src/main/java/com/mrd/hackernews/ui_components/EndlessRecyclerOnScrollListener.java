@@ -1,4 +1,4 @@
-package com.mrd.hackernews.utils;
+package com.mrd.hackernews.ui_components;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;

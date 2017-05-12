@@ -1,5 +1,5 @@
 
-package com.mrd.hackernews.model;
+package com.mrd.hackernews.data;
 
 import java.io.Serializable;
 import java.util.List;
