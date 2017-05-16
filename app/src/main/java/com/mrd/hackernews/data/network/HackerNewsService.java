@@ -3,19 +3,16 @@ package com.mrd.hackernews.data.network;
 import android.content.Context;
 
 import com.mrd.hackernews.data.Item;
+import com.mrd.hackernews.utils.Common;
 
 import java.util.ArrayList;
 
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
-
-import com.mrd.hackernews.utils.Common;
 
 /**
  * Created by mayurdube on 25/04/17.
@@ -33,22 +30,18 @@ public class HackerNewsService {
                 .baseUrl(Common.Urls.BaseURL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(Common.getHttpClient(context).build())
+                .client(Common.getHttpClient(context))
                 .build();
         orderInterFace = retrofit.create(HackerNewsInterface.class);
     }
 
     public Observable<Item> getItemObservable(int id) {
         return getInterface()
-                .getItem(id)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .getItem(id);
     }
 
     public Observable<ArrayList<Integer>> getTopStoriesObservable() {
-        return getInterface().getTopNews()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+        return getInterface().getTopNews();
     }
 
     public static HackerNewsService getInstance(Context context) {

@@ -2,10 +2,9 @@ package com.mrd.hackernews.top_stories;
 
 import android.support.annotation.NonNull;
 
-
 import com.mrd.hackernews.data.Item;
 import com.mrd.hackernews.data.network.HackerNewsService;
-import com.mrd.hackernews.utils.Common;
+import com.mrd.hackernews.utils.schedulers.BaseSchedulerProvider;
 
 import java.util.ArrayList;
 
@@ -24,6 +23,7 @@ public class TopStoriesPresenter implements TopStoriesContract.Presenter {
     private static final int GET_ITEMS = 2;
 
     public static final int NEWS_COUNT = 10;
+    private final BaseSchedulerProvider mSchedulerProvider;
 
     int currentPage = 1;
     ArrayList<Integer> mNewsIds = new ArrayList<>();
@@ -37,11 +37,13 @@ public class TopStoriesPresenter implements TopStoriesContract.Presenter {
     private HackerNewsService mHackerNewsService;
 
 
-    public TopStoriesPresenter(@NonNull HackerNewsService hackerNewsService,
-                               @NonNull TopStoriesContract.View topstoriesView) {
+    public TopStoriesPresenter(@NonNull TopStoriesContract.View topstoriesView,
+                               @NonNull HackerNewsService hackerNewsService,
+                               @NonNull BaseSchedulerProvider schedulerProvider) {
         mTopstoriesView = checkNotNull(topstoriesView);
         mTopstoriesView.setPresenter(this);
         mHackerNewsService = checkNotNull(hackerNewsService);
+        mSchedulerProvider = checkNotNull(schedulerProvider, "schedulerProvider cannot be null");
     }
 
     @Override
@@ -50,6 +52,8 @@ public class TopStoriesPresenter implements TopStoriesContract.Presenter {
         mTopstoriesView.setEndlessIndicator(true);
         disposables.add(mHackerNewsService
                 .getTopStoriesObservable()
+                .observeOn(mSchedulerProvider.computation())
+                .subscribeOn(mSchedulerProvider.io())
                 .subscribe(
                         this::setNewsIds
                         , throwable -> {
@@ -80,8 +84,9 @@ public class TopStoriesPresenter implements TopStoriesContract.Presenter {
         disposables.add(Observable.fromArray(mNewsIds.subList(start, end))
                 .flatMapIterable(list -> list)
                 .concatMap(id -> mHackerNewsService.getItemObservable(id))
+                .observeOn(mSchedulerProvider.ui())
+                .subscribeOn(mSchedulerProvider.io())
                 .subscribe(item -> {
-                    Common.log(item.toString());
                     newsItems.add(item);
                 }, throwable -> {
                     throwable.printStackTrace();

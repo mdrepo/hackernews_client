@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class TopStoriesContract {
 
-    interface View extends BaseView<Presenter> {
+    public interface View extends BaseView<Presenter> {
 
         void showStories(ArrayList<Item> items);
         void showNoStoriesError();
@@ -20,6 +20,7 @@ public class TopStoriesContract {
         void showMessage(String message);
         void setProgressDialogState(boolean status);
         boolean isListVisible();
+        boolean isVisible();
 
         void setEndlessIndicator(boolean state);
     }

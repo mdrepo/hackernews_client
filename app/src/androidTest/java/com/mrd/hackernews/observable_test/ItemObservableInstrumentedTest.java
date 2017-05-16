@@ -1,4 +1,4 @@
-package com.mrd.hackernews;
+package com.mrd.hackernews.observable_test;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -22,7 +22,6 @@ import static org.junit.Assert.fail;
 /**
  * Instrumentation test, which will execute on an Android device.
  *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
 public class ItemObservableInstrumentedTest {

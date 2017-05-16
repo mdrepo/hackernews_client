@@ -12,7 +12,7 @@ import java.util.List;
 
 public class CommentsContract {
 
-    interface View extends BaseView<Presenter> {
+    public interface View extends BaseView<Presenter> {
         public void showComments(List<Item> comments);
         public void showError(Throwable throwable);
         void setLoadingIndicator(boolean state);

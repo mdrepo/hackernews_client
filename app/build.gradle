@@ -2,12 +2,12 @@ apply plugin: 'com.android.application'
 
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.mrd.hackernews"
         minSdkVersion 9
-        targetSdkVersion 23
+        targetSdkVersion 25
         maxSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -30,18 +30,16 @@ android {
 }
 
 ext {
-    supportLibraryVersion = '23.1.1'
+    supportLibraryVersion = '25.1.0'
     rxAndroidVersion = '2.0.1'
     guavaVersion = '18.0'
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+
     compile 'com.squareup.retrofit2:retrofit:2.2.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
     compile 'com.squareup.retrofit2:adapter-rxjava2:2.2.0'
     compile "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
     compile "io.reactivex.rxjava2:rxjava:$rxAndroidVersion"
@@ -50,12 +48,18 @@ dependencies {
     compile "com.android.support:design:$supportLibraryVersion"
     compile "com.android.support:support-v4:$supportLibraryVersion"
     compile "com.android.support:recyclerview-v7:$supportLibraryVersion"
+
     compile "com.google.guava:guava:$guavaVersion"
     compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
     compile 'com.jakewharton:butterknife:8.5.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-library:1.3'
+    testCompile "org.mockito:mockito-all:$rootProject.ext.mockitoVersion"
+    testCompile "org.hamcrest:hamcrest-all:$rootProject.ext.hamcrestVersion"
+    androidTestCompile 'com.jakewharton.espresso:okhttp3-idling-resource:1.0.0'
+    androidTestCompile 'com.squareup.okhttp3:okhttp:3.6.0'
+    androidTestCompile 'com.android.support:support-annotations:25.1.0'
     androidTestCompile 'com.android.support.test.espresso:espresso-contrib:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'support-v4'

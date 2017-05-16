@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.mrd.hackernews.data.Item;
 import com.mrd.hackernews.data.network.HackerNewsService;
+import com.mrd.hackernews.utils.schedulers.BaseSchedulerProvider;
 
 import java.util.ArrayList;
 
@@ -24,14 +25,18 @@ public class CommentsPresenter implements CommentsContract.Presenter {
     CommentsContract.View mCommentView;
     @NonNull
     Item mItem;
+    @NonNull
+    BaseSchedulerProvider mScheduler;
     CompositeDisposable mDisposables = new CompositeDisposable();
 
-    public CommentsPresenter(@NonNull HackerNewsService hackerNewsService,
-                             @NonNull CommentsContract.View commentsView,
+    public CommentsPresenter(@NonNull CommentsContract.View commentsView,
+                             @NonNull HackerNewsService hackerNewsService,
+                             @NonNull BaseSchedulerProvider schedulerProvider,
                              @NonNull Item item) {
         mHackerNewsService = checkNotNull(hackerNewsService);
         mCommentView = checkNotNull(commentsView);
         mItem = checkNotNull(item);
+        mScheduler = checkNotNull(schedulerProvider);
     }
 
     @Override
@@ -40,6 +45,8 @@ public class CommentsPresenter implements CommentsContract.Presenter {
         mDisposables.add(Observable.fromArray(newsItem.getKids())
                 .flatMapIterable(list -> list)
                 .flatMap(id -> mHackerNewsService.getItemObservable(id))
+                .observeOn(mScheduler.ui())
+                .subscribeOn(mScheduler.io())
                 .subscribe(item -> {
                     commentItems.add(item);
                 }, throwable -> {

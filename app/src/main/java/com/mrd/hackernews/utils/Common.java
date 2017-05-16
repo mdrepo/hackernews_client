@@ -2,8 +2,6 @@ package com.mrd.hackernews.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.os.Build;
-import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 
@@ -26,16 +24,26 @@ public class Common {
         public static final String GET_HACKERNEWS_ITEM = "/v0/item/{itemid}.json";
     }
 
-    public static OkHttpClient.Builder getHttpClient(Context context) {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.addInterceptor(logging)
-                .readTimeout(150, TimeUnit.SECONDS)
-                .connectTimeout(150, TimeUnit.SECONDS);
-        return httpClient;
+    static OkHttpClient sOkHttpClient;
+
+
+    public static OkHttpClient getHttpClient(Context context) {
+        if(sOkHttpClient == null) {
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+            httpClient.addInterceptor(logging)
+                    .readTimeout(150, TimeUnit.SECONDS)
+                    .connectTimeout(150, TimeUnit.SECONDS);
+
+            sOkHttpClient = httpClient.build();
+        }
+        return sOkHttpClient;
     }
 
+    public static void setOkHttpClient(OkHttpClient client) {
+        sOkHttpClient = client;
+    }
 
     public static boolean isNetworkConnected(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

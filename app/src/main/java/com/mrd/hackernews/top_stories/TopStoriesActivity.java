@@ -11,28 +11,35 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 
 import com.mrd.hackernews.R;
-import com.mrd.hackernews.data.Item;
-import com.mrd.hackernews.data.network.HackerNewsService;
-import com.mrd.hackernews.ui_components.EndlessRecyclerOnScrollListener;
-import com.mrd.hackernews.utils.OnItemClickListener;
 import com.mrd.hackernews.comments.CommentsActivity;
+import com.mrd.hackernews.data.Item;
+import com.mrd.hackernews.ui_components.EndlessRecyclerOnScrollListener;
+import com.mrd.hackernews.utils.ActivityIdlingResource;
+import com.mrd.hackernews.utils.Injection;
+import com.mrd.hackernews.utils.OnItemClickListener;
 
 import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 
-public class TopStoriesActivity extends AppCompatActivity implements OnItemClickListener, TopStoriesContract.View {
+public class TopStoriesActivity extends AppCompatActivity implements
+        OnItemClickListener, TopStoriesContract.View, ActivityIdlingResource {
 
 
     TopStoriesContract.Presenter mPresenter;
     TopStoriesAdapter mTopStoriesAdapter;
     ProgressDialog mProgressDialog;
 
+    boolean isLoadingDone = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mPresenter = new TopStoriesPresenter(new HackerNewsService(getApplicationContext()), this);
+        mPresenter = new TopStoriesPresenter(this,
+                Injection.provideHackernewsService(getApplicationContext()),
+                Injection.provideSchedulerProvider());
+
         initUI();
     }
 
@@ -84,9 +91,15 @@ public class TopStoriesActivity extends AppCompatActivity implements OnItemClick
     @Override
     public void showStories(ArrayList<Item> items) {
         mTopStoriesAdapter.enableFooter(false);
-        SwipeRefreshLayout swipeRefreshLayout = ButterKnife.findById(this,R.id.swiperefresh);
+        SwipeRefreshLayout swipeRefreshLayout = ButterKnife.findById(this, R.id.swiperefresh);
         swipeRefreshLayout.setRefreshing(false);
-        mTopStoriesAdapter.setNews(items);
+
+        if (items != null && items.size() > 0) {
+            mTopStoriesAdapter.setNews(items);
+        } else {
+            showNoStoriesError();
+        }
+        isLoadingDone = true;
     }
 
     @Override
@@ -136,12 +149,17 @@ public class TopStoriesActivity extends AppCompatActivity implements OnItemClick
     }
 
     @Override
+    public boolean isVisible() {
+        return true;
+    }
+
+    @Override
     public void setEndlessIndicator(boolean state) {
         if (state) {
             mTopStoriesAdapter.loadingLastPage();
         }
         mTopStoriesAdapter.enableFooter(state);
-        SwipeRefreshLayout swipeRefreshLayout = ButterKnife.findById(this,R.id.swiperefresh);
+        SwipeRefreshLayout swipeRefreshLayout = ButterKnife.findById(this, R.id.swiperefresh);
         swipeRefreshLayout.setRefreshing(false);
 
     }
@@ -149,5 +167,10 @@ public class TopStoriesActivity extends AppCompatActivity implements OnItemClick
     @Override
     public void setPresenter(TopStoriesContract.Presenter presenter) {
         mPresenter = presenter;
+    }
+
+    @Override
+    public boolean isIdle() {
+        return isLoadingDone;
     }
 }

@@ -11,14 +11,16 @@ import android.view.MenuItem;
 
 import com.mrd.hackernews.R;
 import com.mrd.hackernews.data.Item;
-import com.mrd.hackernews.data.network.HackerNewsService;
+import com.mrd.hackernews.utils.ActivityIdlingResource;
+import com.mrd.hackernews.utils.Injection;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class CommentsActivity extends AppCompatActivity implements CommentsContract.View{
+public class CommentsActivity extends AppCompatActivity implements CommentsContract.View,
+        ActivityIdlingResource {
 
     CommentAdapter mCommentAdapter;
     ProgressDialog progressDialog;
@@ -40,7 +42,11 @@ public class CommentsActivity extends AppCompatActivity implements CommentsContr
             }
         }
         initUI();
-        mPresenter = new CommentsPresenter(new HackerNewsService(getApplicationContext()),this,newsItem);
+        mPresenter = new CommentsPresenter(this,
+                Injection.provideHackernewsService(getApplicationContext()),
+                Injection.provideSchedulerProvider(),
+                newsItem);
+
         if (!isLoading) {
             mPresenter.getComments(newsItem);
         }
@@ -89,7 +95,7 @@ public class CommentsActivity extends AppCompatActivity implements CommentsContr
 
     @Override
     public void setLoadingIndicator(boolean state) {
-        if(state) progressDialog.show();
+        if (state) progressDialog.show();
         else progressDialog.dismiss();
     }
 
@@ -97,5 +103,10 @@ public class CommentsActivity extends AppCompatActivity implements CommentsContr
     @Override
     public void setPresenter(CommentsContract.Presenter presenter) {
         this.mPresenter = presenter;
+    }
+
+    @Override
+    public boolean isIdle() {
+        return !isLoading;
     }
 }
